@@ -3,529 +3,764 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ETI PRO - Gestão Inteligente</title>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS CDN -->
+    <title>ETI System - Gestão Inteligente</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Outfit', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: '#7c3aed',
-                        'brand-light': '#a78bfa',
-                        accent: '#10b981',
-                        'bg-dark': '#050505',
-                        'card-dark': '#111111',
-                        'sidebar-dark': '#0a0a0a',
-                        border: 'rgba(255, 255, 255, 0.08)',
-                    }
-                }
-            }
-        }
-    </script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #050505; color: white; }
-        .glass-card { background: #111; border: 1px solid rgba(255,255,255,0.08); border-radius: 1.5rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); backdrop-filter: blur(12px); }
-        .input-field { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 1rem; padding: 1rem 1.5rem; outline: none; transition: all 0.3s; width: 100%; }
-        .input-field:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.2); }
-        .btn-primary { background: #7c3aed; color: white; font-weight: 700; padding: 1rem 2rem; border-radius: 1rem; transition: all 0.3s; box-shadow: 0 10px 15px -3px rgba(124,58,237,0.3); }
-        .btn-primary:hover { background: #a78bfa; transform: translateY(-2px); }
-        .btn-primary:active { transform: scale(0.95); }
-        [v-cloak] { display: none; }
+        :root {
+            --bg: #0f172a;
+            --glass: rgba(30, 41, 59, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+        }
+        .sidebar-item {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border-left: 4px solid #3b82f6;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        input, select, textarea {
+            background: rgba(15, 23, 42, 0.5) !important;
+            border: 1px solid var(--border) !important;
+            color: white !important;
+            padding: 0.75rem !important;
+            border-radius: 0.5rem !important;
+            width: 100%;
+        }
+        input:focus {
+            outline: none;
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        [hidden] { display: none !important; }
     </style>
 </head>
-<body class="antialiased font-sans selection:bg-brand/30 selection:text-white">
-
+<body class="min-h-screen flex">
     <!-- Login Screen -->
-    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand/20 blur-[120px] rounded-full"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent/10 blur-[120px] rounded-full"></div>
-        
-        <div class="glass-card p-12 w-full max-w-md text-center relative z-10">
-            <div class="w-24 h-24 bg-brand/10 rounded-3xl flex items-center justify-center mx-auto mb-8 rotate-3">
-                <i data-lucide="trending-up" class="w-12 h-12 text-brand"></i>
+    <div id="login-screen" class="fixed inset-0 z-[100] bg-slate-950 flex items-center justify-center p-4">
+        <div class="glass max-w-md w-full p-10 rounded-3xl text-center space-y-8">
+            <div class="w-20 h-20 bg-blue-600 rounded-2xl mx-auto flex items-center justify-center shadow-2xl shadow-blue-500/20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="text-white w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             </div>
-            <h2 class="text-5xl font-display font-extrabold mb-2 italic tracking-tighter uppercase">ETI PRO</h2>
-            <p class="text-gray-400 mb-10 font-medium">Gestão Inteligente & Financeiro</p>
-            <button onclick="login()" class="w-full bg-white text-black font-bold py-5 rounded-2xl hover:bg-gray-100 transition-all flex items-center justify-center gap-4 shadow-xl active:scale-95">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-6 h-6" alt="Google">
-                Acessar Painel
-            </button>
+            <div class="space-y-2">
+                <h1 class="text-4xl font-bold tracking-tight">ETI System</h1>
+                <p class="text-slate-400">Gestão Inteligente para Provedores e Segurança</p>
+            </div>
+            <div class="space-y-4">
+                <div id="login-error" class="text-red-500 text-xs bg-red-500/10 p-2 rounded hidden"></div>
+                <input id="login-email" type="email" placeholder="E-mail" value="etitecnologies@gmail.com">
+                <input id="login-password" type="password" placeholder="Senha" value="vgbb0410">
+                <button id="login-btn" class="w-full py-4 bg-blue-600 text-white font-bold rounded-2xl flex items-center justify-center gap-3 hover:bg-blue-700 transition shadow-xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                    Entrar no Sistema
+                </button>
+            </div>
+            <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Acesso Restrito</p>
         </div>
     </div>
 
-    <!-- App Layout (Hidden by default) -->
-    <div id="app-layout" class="hidden min-h-screen flex flex-col lg:flex-row">
-        
-        <!-- Sidebar -->
-        <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-50 w-80 bg-sidebar-dark border-r border-border p-8 transform -translate-x-full lg:translate-x-0 transition-transform duration-500 ease-out">
-            <div class="flex items-center justify-between mb-16">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-brand rounded-xl flex items-center justify-center shadow-lg shadow-brand/30">
-                        <i data-lucide="trending-up" class="w-6 h-6 text-white"></i>
-                    </div>
-                    <h2 class="text-3xl font-display font-black text-white tracking-tighter italic uppercase">ETI PRO</h2>
-                </div>
-                <button onclick="toggleSidebar(false)" class="lg:hidden text-gray-400 hover:text-white">
-                    <i data-lucide="x" class="w-7 h-7"></i>
-                </button>
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-72 glass border-r border-white/5 flex flex-col hidden">
+        <div class="p-8">
+            <div class="flex items-center gap-3 text-blue-500 mb-10">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span class="text-xl font-bold tracking-tight text-white">ETI System</span>
             </div>
-            
-            <nav class="space-y-4">
-                <button onclick="showScreen('dashboard')" class="nav-btn w-full flex items-center gap-4 px-6 py-5 rounded-2xl transition-all font-semibold text-gray-500 hover:bg-white/5 hover:text-white" data-screen="dashboard">
-                    <i data-lucide="layout-dashboard" class="w-6 h-6"></i> Dashboard
-                </button>
-                <button onclick="showScreen('clientes')" class="nav-btn w-full flex items-center gap-4 px-6 py-5 rounded-2xl transition-all font-semibold text-gray-500 hover:bg-white/5 hover:text-white" data-screen="clientes">
-                    <i data-lucide="users" class="w-6 h-6"></i> Clientes
-                </button>
-                <button onclick="showScreen('financeiro')" class="nav-btn w-full flex items-center gap-4 px-6 py-5 rounded-2xl transition-all font-semibold text-gray-500 hover:bg-white/5 hover:text-white" data-screen="financeiro">
-                    <i data-lucide="circle-dollar-sign" class="w-6 h-6"></i> Financeiro
-                </button>
-                
-                <div class="pt-16">
-                    <div class="p-5 bg-white/5 border border-border rounded-3xl mb-6 flex items-center gap-4">
-                        <img id="user-photo" src="" class="w-12 h-12 rounded-2xl border-2 border-brand/20" alt="Avatar">
-                        <div class="overflow-hidden">
-                            <p id="user-name" class="text-sm font-bold text-white truncate"></p>
-                            <p id="user-email" class="text-xs text-gray-500 truncate"></p>
-                        </div>
-                    </div>
-                    <button onclick="logout()" class="w-full flex items-center gap-4 px-6 py-5 rounded-2xl hover:bg-red-500/10 text-red-400 transition-all font-semibold">
-                        <i data-lucide="log-out" class="w-6 h-6"></i> Sair
-                    </button>
+            <nav class="space-y-2">
+                <div data-view="dashboard" class="sidebar-item active p-4 rounded-xl flex items-center gap-3 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    Dashboard
+                </div>
+                <div data-view="clientes" class="sidebar-item p-4 rounded-xl flex items-center gap-3 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Clientes
+                </div>
+                <div data-view="estoque" class="sidebar-item p-4 rounded-xl flex items-center gap-3 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+                    Estoque
+                </div>
+                <div data-view="servicos" class="sidebar-item p-4 rounded-xl flex items-center gap-3 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    Ordens de Serviço
+                </div>
+                <div data-view="planos" class="sidebar-item p-4 rounded-xl flex items-center gap-3 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                    Planos e Produtos
                 </div>
             </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="flex-1 p-6 lg:p-16 overflow-auto relative">
-            <div class="absolute top-0 right-0 w-[30%] h-[30%] bg-brand/5 blur-[100px] rounded-full pointer-events-none"></div>
-            
-            <header class="flex items-center justify-between mb-12 lg:mb-16">
-                <div class="flex items-center gap-4">
-                    <button onclick="toggleSidebar(true)" class="lg:hidden p-4 bg-card-dark rounded-2xl border border-border">
-                        <i data-lucide="menu" class="w-6 h-6"></i>
-                    </button>
-                    <div>
-                        <h1 id="screen-title" class="text-4xl lg:text-5xl font-display font-black tracking-tight uppercase italic">Dashboard</h1>
-                        <p id="welcome-msg" class="text-gray-500 font-medium mt-1"></p>
-                    </div>
+        </div>
+        <div class="mt-auto p-8 border-t border-white/5">
+            <div class="flex items-center gap-3 mb-4">
+                <img id="user-photo" class="w-10 h-10 rounded-full border border-white/10" src="https://ui-avatars.com/api/?name=Admin&background=3b82f6&color=fff" alt="">
+                <div class="overflow-hidden">
+                    <p id="user-name" class="text-sm font-bold truncate"></p>
+                    <p id="user-email" class="text-[10px] text-slate-500 truncate"></p>
                 </div>
-                <div class="hidden md:flex items-center gap-4">
-                    <div class="flex items-center gap-2 bg-accent/10 text-accent px-5 py-2.5 rounded-full text-sm font-bold border border-accent/20">
-                        <span class="w-2.5 h-2.5 bg-accent rounded-full animate-pulse"></span>
-                        Sistema Online
-                    </div>
-                </div>
-            </header>
-
-            <!-- Screens -->
-            <div id="screens-container">
-                
-                <!-- Dashboard Screen -->
-                <section id="screen-dashboard" class="screen space-y-12">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div class="glass-card p-10 relative overflow-hidden group">
-                            <i data-lucide="dollar-sign" class="absolute top-0 right-0 p-6 opacity-5 w-24 h-24"></i>
-                            <div class="w-12 h-12 bg-brand/10 rounded-2xl flex items-center justify-center mb-6">
-                                <i data-lucide="trending-up" class="w-6 h-6 text-brand"></i>
-                            </div>
-                            <p class="text-gray-400 font-semibold mb-2 uppercase tracking-wider text-xs">Faturamento Total</p>
-                            <h2 id="dash-total" class="text-4xl font-display font-black text-white">R$ 0,00</h2>
-                        </div>
-                        <div class="glass-card p-10 relative overflow-hidden">
-                            <i data-lucide="users" class="absolute top-0 right-0 p-6 opacity-5 w-24 h-24"></i>
-                            <div class="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center mb-6">
-                                <i data-lucide="users" class="w-6 h-6 text-accent"></i>
-                            </div>
-                            <p class="text-gray-400 font-semibold mb-2 uppercase tracking-wider text-xs">Clientes Ativos</p>
-                            <h2 id="dash-clientes" class="text-4xl font-display font-black text-white">0</h2>
-                        </div>
-                        <div class="glass-card p-10 relative overflow-hidden">
-                            <i data-lucide="circle-dollar-sign" class="absolute top-0 right-0 p-6 opacity-5 w-24 h-24"></i>
-                            <div class="w-12 h-12 bg-brand-light/10 rounded-2xl flex items-center justify-center mb-6">
-                                <i data-lucide="circle-dollar-sign" class="w-6 h-6 text-brand-light"></i>
-                            </div>
-                            <p class="text-gray-400 font-semibold mb-2 uppercase tracking-wider text-xs">Faturas Geradas</p>
-                            <h2 id="dash-faturas" class="text-4xl font-display font-black text-white">0</h2>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
-                        <div class="lg:col-span-2 glass-card p-10">
-                            <h3 class="text-2xl font-display font-bold mb-10 italic">Fluxo de Receita</h3>
-                            <div class="h-96 w-full">
-                                <canvas id="revenueChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="glass-card p-10">
-                            <h3 class="text-2xl font-display font-bold mb-8 italic">Atividade Recente</h3>
-                            <div id="recent-activity" class="space-y-6">
-                                <!-- Dynamic Content -->
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Clientes Screen -->
-                <section id="screen-clientes" class="screen hidden space-y-12">
-                    <div class="glass-card p-10">
-                        <h3 class="text-2xl font-display font-bold mb-8 flex items-center gap-3 italic">
-                            <i data-lucide="user-plus" class="w-6 h-6 text-brand"></i> Novo Cadastro
-                        </h3>
-                        <form onsubmit="handleSaveCliente(event)" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-                            <input id="c-nome" placeholder="Nome Completo" class="input-field" required>
-                            <input id="c-doc" placeholder="CPF ou CNPJ" class="input-field" required>
-                            <input id="c-end" placeholder="Endereço" class="input-field" required>
-                            <input id="c-whats" placeholder="WhatsApp" class="input-field" required>
-                            <button type="submit" class="btn-primary flex items-center justify-center gap-3">
-                                <i data-lucide="plus" class="w-6 h-6"></i> Cadastrar
-                            </button>
-                        </form>
-                    </div>
-                    <div id="clientes-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <!-- Dynamic Content -->
-                    </div>
-                </section>
-
-                <!-- Financeiro Screen -->
-                <section id="screen-financeiro" class="screen hidden space-y-12">
-                    <div class="glass-card p-10">
-                        <h3 class="text-2xl font-display font-bold mb-8 italic">Lançar Fatura</h3>
-                        <form onsubmit="handleSaveFatura(event)" class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                            <select id="f-cliente" class="input-field" required>
-                                <option value="">Selecionar Cliente</option>
-                            </select>
-                            <input id="f-valor" type="number" step="0.01" placeholder="Valor R$" class="input-field" required>
-                            <select id="f-status" class="input-field">
-                                <option value="PENDENTE">PENDENTE</option>
-                                <option value="PAGO">PAGO</option>
-                                <option value="VENCIDO">VENCIDO</option>
-                            </select>
-                            <button type="submit" class="btn-primary flex items-center justify-center gap-3">
-                                <i data-lucide="send" class="w-6 h-6"></i> Gerar & Notificar
-                            </button>
-                        </form>
-                    </div>
-                    <div class="glass-card overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
-                                <thead>
-                                    <tr class="bg-white/[0.02] text-gray-500 text-xs uppercase tracking-[0.2em] font-black border-b border-border">
-                                        <th class="px-10 py-6">Cliente</th>
-                                        <th className="px-10 py-6">Valor</th>
-                                        <th className="px-10 py-6">Status</th>
-                                        <th className="px-10 py-6">Data</th>
-                                        <th className="px-10 py-6 text-right">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="faturas-table-body" class="divide-y divide-border">
-                                    <!-- Dynamic Content -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
             </div>
-        </main>
+            <button id="logout-btn" class="w-full py-2 text-xs text-red-400 hover:text-red-300 transition flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Sair do Sistema
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="main-content" class="flex-1 p-12 overflow-y-auto hidden">
+        <!-- Dashboard View -->
+        <div id="view-dashboard" class="animate-fade-in space-y-8">
+            <h2 class="text-4xl font-bold tracking-tight">Bem-vindo, <span id="welcome-name"></span></h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="glass p-8 rounded-3xl space-y-4">
+                    <p class="text-slate-400 font-medium">Clientes Ativos</p>
+                    <p id="stat-clients" class="text-5xl font-bold tracking-tighter">0</p>
+                </div>
+                <div class="glass p-8 rounded-3xl space-y-4">
+                    <p class="text-slate-400 font-medium">OS em Aberto</p>
+                    <p id="stat-orders" class="text-5xl font-bold tracking-tighter">0</p>
+                </div>
+                <div class="glass p-8 rounded-3xl space-y-4">
+                    <p class="text-slate-400 font-medium">Itens em Estoque</p>
+                    <p id="stat-inventory" class="text-5xl font-bold tracking-tighter">0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clientes View -->
+        <div id="view-clientes" class="animate-fade-in space-y-6 hidden">
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl font-bold">Gestão de Clientes</h2>
+                <button onclick="openModal('modal-cliente')" class="btn-primary">Novo Cliente</button>
+            </div>
+            <div class="glass rounded-xl overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-800 text-slate-400 text-xs uppercase font-bold">
+                        <tr>
+                            <th class="p-4">Nome / Empresa</th>
+                            <th class="p-4">Documento</th>
+                            <th class="p-4">Telefone</th>
+                            <th class="p-4">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clients-list" class="divide-y divide-slate-800"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Estoque View -->
+        <div id="view-estoque" class="animate-fade-in space-y-6 hidden">
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl font-bold">Estoque de Equipamentos</h2>
+                <button onclick="openModal('modal-estoque')" class="btn-primary">Adicionar Item</button>
+            </div>
+            <div id="inventory-list" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        </div>
+
+        <!-- Servicos View -->
+        <div id="view-servicos" class="animate-fade-in space-y-6 hidden">
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl font-bold">Ordens de Serviço</h2>
+                <button onclick="openOSModal()" class="btn-primary">Abrir Nova OS</button>
+            </div>
+            <div id="orders-list" class="grid grid-cols-1 gap-4"></div>
+        </div>
+
+        <!-- Planos View -->
+        <div id="view-planos" class="animate-fade-in space-y-12 hidden">
+            <div class="space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">Planos de Assinatura</h2>
+                    <button onclick="openModal('modal-plano')" class="btn-primary">Novo Plano</button>
+                </div>
+                <div id="plans-list" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+            </div>
+            <div class="space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">Produtos e Serviços</h2>
+                    <button onclick="openModal('modal-produto')" class="btn-primary">Novo Produto</button>
+                </div>
+                <div id="products-list" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <div id="modal-cliente" class="fixed inset-0 z-[110] bg-slate-950/80 flex items-center justify-center p-4 hidden">
+        <div class="glass w-full max-w-2xl p-8 rounded-2xl space-y-4">
+            <h3 class="text-xl font-bold">Cadastro de Cliente</h3>
+            <div id="error-cliente" class="text-red-500 text-sm bg-red-500/10 p-2 rounded hidden"></div>
+            <div class="grid grid-cols-2 gap-4">
+                <input id="c-nome" placeholder="Nome Completo / Razão Social">
+                <input id="c-doc" placeholder="CPF ou CNPJ">
+                <input id="c-tel" placeholder="Telefone / WhatsApp">
+                <input id="c-email" placeholder="E-mail">
+                <input id="c-end" class="col-span-2" placeholder="Endereço Completo">
+            </div>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeModal('modal-cliente')" class="btn-secondary">Cancelar</button>
+                <button id="save-client" class="btn-primary">Salvar Cliente</button>
+            </div>
+        </div>
     </div>
 
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    <div id="modal-estoque" class="fixed inset-0 z-[110] bg-slate-950/80 flex items-center justify-center p-4 hidden">
+        <div class="glass w-full max-w-md p-8 rounded-2xl space-y-4">
+            <h3 class="text-xl font-bold">Entrada de Equipamento</h3>
+            <div id="error-estoque" class="text-red-500 text-sm bg-red-500/10 p-2 rounded hidden"></div>
+            <div class="space-y-4">
+                <input id="i-nome" placeholder="Nome do Equipamento">
+                <input id="i-qtd" type="number" placeholder="Quantidade">
+                <select id="i-cat">
+                    <option>Câmeras / CFTV</option>
+                    <option>Solar / Inversores</option>
+                    <option>Redes / Roteadores</option>
+                </select>
+            </div>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeModal('modal-estoque')" class="btn-secondary">Cancelar</button>
+                <button id="save-inventory" class="btn-primary">Cadastrar</button>
+            </div>
+        </div>
+    </div>
 
-        // --- CONFIGURAÇÃO FIREBASE ---
-        // Se você estiver usando o AI Studio, ele injeta o arquivo firebase-applet-config.json
-        // Para um arquivo único, você deve colar as credenciais aqui se for usar fora do ambiente.
+    <div id="modal-os" class="fixed inset-0 z-[110] bg-slate-950/80 flex items-center justify-center p-4 hidden">
+        <div class="glass w-full max-w-lg p-8 rounded-2xl space-y-4">
+            <h3 class="text-xl font-bold">Nova Ordem de Serviço</h3>
+            <div id="error-os" class="text-red-500 text-sm bg-red-500/10 p-2 rounded hidden"></div>
+            <div class="space-y-4">
+                <select id="os-cliente"></select>
+                <select id="os-tipo">
+                    <option>Instalação</option>
+                    <option>Manutenção</option>
+                    <option>Venda</option>
+                    <option>Projeto CFTV</option>
+                    <option>Projeto Solar</option>
+                    <option>Consultoria</option>
+                </select>
+                <input id="os-data" type="date">
+                <textarea id="os-desc" placeholder="Descrição detalhada..." rows="3"></textarea>
+            </div>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeModal('modal-os')" class="btn-secondary">Cancelar</button>
+                <button id="save-os" class="btn-primary">Gerar OS</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-plano" class="fixed inset-0 z-[110] bg-slate-950/80 flex items-center justify-center p-4 hidden">
+        <div class="glass w-full max-w-md p-8 rounded-2xl space-y-4">
+            <h3 class="text-xl font-bold">Cadastrar Novo Plano</h3>
+            <div id="error-plano" class="text-red-500 text-sm bg-red-500/10 p-2 rounded hidden"></div>
+            <div class="space-y-4">
+                <input id="p-nome" placeholder="Nome do Plano">
+                <input id="p-preco" type="number" placeholder="Valor Mensal">
+                <textarea id="p-desc" placeholder="Descrição..." rows="3"></textarea>
+            </div>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeModal('modal-plano')" class="btn-secondary">Cancelar</button>
+                <button id="save-plan" class="btn-primary">Salvar Plano</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-produto" class="fixed inset-0 z-[110] bg-slate-950/80 flex items-center justify-center p-4 hidden">
+        <div class="glass w-full max-w-md p-8 rounded-2xl space-y-4">
+            <h3 class="text-xl font-bold">Cadastrar Novo Produto</h3>
+            <div id="error-produto" class="text-red-500 text-sm bg-red-500/10 p-2 rounded hidden"></div>
+            <div class="space-y-4">
+                <input id="pr-nome" placeholder="Nome do Produto/Serviço">
+                <input id="pr-preco" type="number" placeholder="Preço">
+                <select id="pr-cat">
+                    <option value="">Selecione a Categoria...</option>
+                    <option>Equipamento</option>
+                    <option>Serviço</option>
+                    <option>Licença</option>
+                    <option>Outros</option>
+                </select>
+            </div>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeModal('modal-produto')" class="btn-secondary">Cancelar</button>
+                <button id="save-product" class="btn-primary">Salvar Produto</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js';
+        import { getFirestore, collection, addDoc, onSnapshot, query, where, serverTimestamp, doc, updateDoc } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';
+
         const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_AUTH_DOMAIN",
-            projectId: "SEU_PROJECT_ID",
-            storageBucket: "SEU_STORAGE_BUCKET",
-            messagingSenderId: "SEU_SENDER_ID",
-            appId: "SEU_APP_ID"
+  apiKey: "AIzaSyBL7quexyJO14PRkujzoFE0PkKS4h5-_wc",
+  authDomain: "eti-system.firebaseapp.com",
+  projectId: "eti-system",
+  storageBucket: "eti-system.firebasestorage.app",
+  messagingSenderId: "843294109597",
+  appId: "1:843294109597:web:ee618884ef010c06020974",
+  measurementId: "G-S5T82EKRK5"
+};
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+
+        // State
+        let currentUser = null;
+        let clients = [];
+        let inventory = [];
+        let orders = [];
+        let plans = [];
+        let products = [];
+        let editingOSId = null;
+
+        // Firestore Error Handling
+        const OperationType = {
+            CREATE: 'create',
+            UPDATE: 'update',
+            DELETE: 'delete',
+            LIST: 'list',
+            GET: 'get',
+            WRITE: 'write',
         };
 
-        // Tenta carregar do ambiente se disponível
-        let config = firebaseConfig;
-        try {
-            const response = await fetch('./firebase-applet-config.json');
-            if (response.ok) config = await response.json();
-        } catch (e) {}
+        function handleFirestoreError(error, operationType, path) {
+            const errInfo = {
+                error: error instanceof Error ? error.message : String(error),
+                authInfo: {
+                    userId: auth.currentUser?.uid,
+                    email: auth.currentUser?.email,
+                    emailVerified: auth.currentUser?.emailVerified,
+                    isAnonymous: auth.currentUser?.isAnonymous,
+                },
+                operationType,
+                path
+            };
+            console.error('Firestore Error: ', JSON.stringify(errInfo));
+            
+            const errorBanner = document.createElement('div');
+            errorBanner.className = 'fixed bottom-4 right-4 bg-red-600 text-white p-4 rounded-xl shadow-2xl z-[200] animate-fade-in max-w-md';
+            errorBanner.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <div>
+                        <p class="font-bold">Erro de Permissão</p>
+                        <p class="text-xs opacity-80 mt-1">Não foi possível acessar a coleção: ${path}. Verifique as regras de segurança.</p>
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" class="mt-2 text-[10px] underline uppercase font-bold">Fechar</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(errorBanner);
+            setTimeout(() => errorBanner.remove(), 8000);
+        }
 
-        const app = initializeApp(config);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const provider = new GoogleAuthProvider();
+        // DOM Elements
+        const loginScreen = document.getElementById('login-screen');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const sidebarItems = document.querySelectorAll('.sidebar-item');
+        const views = document.querySelectorAll('main > div');
 
-        // --- ESTADO GLOBAL ---
-        let clientes = [];
-        let faturas = [];
-        let revenueChart = null;
-
-        // --- AUTENTICAÇÃO ---
-        window.login = () => signInWithPopup(auth, provider);
-        window.logout = () => signOut(auth);
+        // Auth Listeners
+        loginBtn.onclick = () => {
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+            const errorDiv = document.getElementById('login-error');
+            
+            errorDiv.classList.add('hidden');
+            
+            signInWithEmailAndPassword(auth, email, pass).catch(err => {
+                console.error(err);
+                errorDiv.textContent = "Erro: Verifique se o e-mail e senha estão corretos.";
+                errorDiv.classList.remove('hidden');
+            });
+        };
+        logoutBtn.onclick = () => signOut(auth).catch(console.error);
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('app-layout').classList.remove('hidden');
-                document.getElementById('user-name').innerText = user.displayName;
-                document.getElementById('user-email').innerText = user.email;
-                document.getElementById('user-photo').src = user.photoURL;
-                document.getElementById('welcome-msg').innerText = `Bem-vindo de volta, ${user.displayName.split(' ')[0]}!`;
-                initListeners();
+                currentUser = user;
+                loginScreen.classList.add('hidden');
+                sidebar.classList.remove('hidden');
+                mainContent.classList.remove('hidden');
+                
+                document.getElementById('user-photo').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.email}&background=3b82f6&color=fff`;
+                document.getElementById('user-name').textContent = user.displayName || 'Administrador';
+                document.getElementById('user-email').textContent = user.email || '';
+                document.getElementById('welcome-name').textContent = user.displayName?.split(' ')[0] || 'Administrador';
+                
+                startListeners(user.uid);
+                document.getElementById('os-data').value = new Date().toISOString().split('T')[0];
             } else {
-                document.getElementById('login-screen').classList.remove('hidden');
-                document.getElementById('app-layout').classList.add('hidden');
+                currentUser = null;
+                loginScreen.classList.remove('hidden');
+                sidebar.classList.add('hidden');
+                mainContent.classList.add('hidden');
             }
         });
 
-        // --- LISTENERS DE DADOS ---
-        function initListeners() {
-            // Clientes
-            onSnapshot(query(collection(db, 'clientes'), orderBy('nome')), (snapshot) => {
-                clientes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderClientes();
-                updateFinanceiroSelect();
-                updateDashboard();
-            });
+        // Real-time Listeners
+        function startListeners(uid) {
+            const qClients = query(collection(db, 'clientes'), where('userId', '==', uid));
+            onSnapshot(qClients, (snap) => {
+                clients = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderClients();
+                updateStats();
+                updateOSSelect();
+            }, (err) => handleFirestoreError(err, OperationType.LIST, 'clientes'));
 
-            // Faturas
-            onSnapshot(query(collection(db, 'faturas'), orderBy('createdAt', 'desc')), (snapshot) => {
-                faturas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderFaturas();
-                updateDashboard();
-            });
+            const qInventory = query(collection(db, 'estoque'), where('userId', '==', uid));
+            onSnapshot(qInventory, (snap) => {
+                inventory = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderInventory();
+                updateStats();
+            }, (err) => handleFirestoreError(err, OperationType.LIST, 'estoque'));
+
+            const qOrders = query(collection(db, 'os'), where('userId', '==', uid));
+            onSnapshot(qOrders, (snap) => {
+                orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderOrders();
+                updateStats();
+            }, (err) => handleFirestoreError(err, OperationType.LIST, 'os'));
+
+            const qPlans = query(collection(db, 'planos'), where('userId', '==', uid));
+            onSnapshot(qPlans, (snap) => {
+                plans = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderPlans();
+            }, (err) => handleFirestoreError(err, OperationType.LIST, 'planos'));
+
+            const qProducts = query(collection(db, 'produtos'), where('userId', '==', uid));
+            onSnapshot(qProducts, (snap) => {
+                products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderProducts();
+            }, (err) => handleFirestoreError(err, OperationType.LIST, 'produtos'));
         }
 
-        // --- NAVEGAÇÃO ---
-        window.showScreen = (screenId) => {
-            document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-            document.getElementById(`screen-${screenId}`).classList.remove('hidden');
-            
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-brand', 'text-white', 'shadow-xl');
-                btn.classList.add('text-gray-500');
-                if(btn.dataset.screen === screenId) {
-                    btn.classList.add('bg-brand', 'text-white', 'shadow-xl');
-                    btn.classList.remove('text-gray-500');
-                }
-            });
-
-            document.getElementById('screen-title').innerText = screenId;
-            toggleSidebar(false);
-        };
-
-        window.toggleSidebar = (show) => {
-            const sidebar = document.getElementById('sidebar');
-            if(show) sidebar.classList.remove('-translate-x-full');
-            else sidebar.classList.add('-translate-x-full');
-        };
-
-        // --- OPERAÇÕES ---
-        window.handleSaveCliente = async (e) => {
-            e.preventDefault();
-            const data = {
-                nome: document.getElementById('c-nome').value,
-                documento: document.getElementById('c-doc').value,
-                endereco: document.getElementById('c-end').value,
-                whats: document.getElementById('c-whats').value,
-                createdAt: serverTimestamp()
+        // Navigation
+        sidebarItems.forEach(item => {
+            item.onclick = () => {
+                const viewId = item.getAttribute('data-view');
+                sidebarItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                views.forEach(v => v.classList.add('hidden'));
+                document.getElementById(`view-${viewId}`).classList.remove('hidden');
             };
-            try {
-                await addDoc(collection(db, 'clientes'), data);
-                e.target.reset();
-            } catch (err) { alert("Erro ao salvar cliente."); }
-        };
+        });
 
-        window.handleSaveFatura = async (e) => {
-            e.preventDefault();
-            const clienteId = document.getElementById('f-cliente').value;
-            const valor = parseFloat(document.getElementById('f-valor').value);
-            const status = document.getElementById('f-status').value;
-            const cliente = clientes.find(c => c.id === clienteId);
-
-            if(!cliente) return;
-
-            try {
-                // Chamada para o Asaas (Backend)
-                const response = await fetch('/api/gerar-boleto', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cliente, valor, status })
-                });
-                const asaasData = await response.json();
-
-                if(!response.ok) throw new Error(asaasData.error);
-
-                await addDoc(collection(db, 'faturas'), {
-                    clienteId,
-                    clienteNome: cliente.nome,
-                    valor,
-                    status,
-                    asaasId: asaasData.id,
-                    invoiceUrl: asaasData.invoiceUrl || asaasData.bankSlipUrl,
-                    createdAt: serverTimestamp()
-                });
-
-                // WhatsApp
-                const msg = `Olá ${cliente.nome}, sua fatura de R$ ${valor.toFixed(2)} foi gerada.\n\nLink: ${asaasData.invoiceUrl || asaasData.bankSlipUrl}`;
-                window.open(`https://wa.me/${cliente.whats.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
-
-                e.target.reset();
-                alert("Fatura gerada com sucesso!");
-            } catch (err) { alert("Erro: " + err.message); }
-        };
-
-        window.deleteDocById = async (coll, id) => {
-            if(confirm("Deseja excluir este registro?")) {
-                await deleteDoc(doc(db, coll, id));
-            }
-        };
-
-        // --- RENDERIZAÇÃO ---
-        function renderClientes() {
-            const container = document.getElementById('clientes-list');
-            container.innerHTML = clientes.map(c => `
-                <div class="glass-card p-8 group hover:border-brand/40 transition-all duration-500">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="w-16 h-16 bg-brand/10 rounded-2xl flex items-center justify-center text-brand font-display font-black text-2xl">${c.nome[0].toUpperCase()}</div>
-                        <button onclick="deleteDocById('clientes', '${c.id}')" class="p-3 text-gray-600 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all">
-                            <i data-lucide="trash-2" class="w-6 h-6"></i>
-                        </button>
-                    </div>
-                    <h4 class="text-2xl font-display font-bold text-white mb-2 group-hover:text-brand transition-colors">${c.nome}</h4>
-                    <div class="space-y-3 mb-8 text-gray-500 text-sm font-medium">
-                        <p>Doc: ${c.documento}</p>
-                        <p>${c.endereco}</p>
-                        <p>${c.whats}</p>
-                    </div>
-                    <a href="https://wa.me/${c.whats.replace(/\D/g, '')}" target="_blank" class="w-full flex items-center justify-center gap-3 py-4 bg-white/5 rounded-2xl text-sm font-bold hover:bg-brand hover:text-white transition-all">
-                        <i data-lucide="send" class="w-4 h-4"></i> Enviar Mensagem
-                    </a>
-                </div>
-            `).join('');
-            lucide.createIcons();
+        // Rendering Functions
+        function updateStats() {
+            document.getElementById('stat-clients').textContent = clients.length;
+            document.getElementById('stat-orders').textContent = orders.filter(o => o.status === 'Aberto').length;
+            document.getElementById('stat-inventory').textContent = inventory.length;
         }
 
-        function renderFaturas() {
-            const tbody = document.getElementById('faturas-table-body');
-            tbody.innerHTML = faturas.map(f => `
-                <tr class="hover:bg-white/[0.02] transition-colors group">
-                    <td class="px-10 py-6">
-                        <p class="font-bold text-white group-hover:text-brand transition-colors">${f.clienteNome}</p>
-                        <p class="text-[10px] text-gray-600 font-mono mt-0.5 uppercase">ID: ${f.id.slice(0,8)}</p>
+        function renderClients() {
+            const list = document.getElementById('clients-list');
+            list.innerHTML = clients.map(c => `
+                <tr class="hover:bg-slate-800/50 transition">
+                    <td class="p-4">
+                        <div class="font-bold">${c.nome}</div>
+                        <div class="text-xs text-slate-500">${c.email}</div>
                     </td>
-                    <td class="px-10 py-6"><span class="text-white font-display font-bold text-lg">R$ ${f.valor.toFixed(2)}</span></td>
-                    <td class="px-10 py-6">
-                        <span class="text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest ${f.status === 'PAGO' ? 'bg-accent/10 text-accent border border-accent/20' : f.status === 'VENCIDO' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'}">
-                            ${f.status}
+                    <td class="p-4 text-sm">${c.doc}</td>
+                    <td class="p-4 text-sm">${c.tel}</td>
+                    <td class="p-4">
+                        <span class="bg-emerald-500/10 text-emerald-500 text-[10px] font-bold px-2 py-1 rounded-full">
+                            ${(c.status || 'ATIVO').toUpperCase()}
                         </span>
-                    </td>
-                    <td class="px-10 py-6 text-gray-500 text-sm font-medium">${f.createdAt ? new Date(f.createdAt.seconds * 1000).toLocaleDateString('pt-BR') : 'Agora'}</td>
-                    <td class="px-10 py-6 text-right">
-                        <div class="flex items-center justify-end gap-3">
-                            ${f.invoiceUrl ? `<a href="${f.invoiceUrl}" target="_blank" class="p-3 text-brand hover:bg-brand/10 rounded-xl transition-all"><i data-lucide="dollar-sign" class="w-6 h-6"></i></a>` : ''}
-                            <button onclick="deleteDocById('faturas', '${f.id}')" class="p-3 text-gray-600 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all">
-                                <i data-lucide="trash-2" class="w-6 h-6"></i>
-                            </button>
-                        </div>
                     </td>
                 </tr>
             `).join('');
-            lucide.createIcons();
         }
 
-        function updateFinanceiroSelect() {
-            const select = document.getElementById('f-cliente');
-            const currentVal = select.value;
-            select.innerHTML = '<option value="">Selecionar Cliente</option>' + 
-                clientes.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
-            select.value = currentVal;
-        }
-
-        function updateDashboard() {
-            const total = faturas.reduce((sum, f) => sum + f.valor, 0);
-            document.getElementById('dash-total').innerText = `R$ ${total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
-            document.getElementById('dash-clientes').innerText = clientes.length;
-            document.getElementById('dash-faturas').innerText = faturas.length;
-
-            const recent = faturas.slice(0, 5).map(f => `
-                <div class="flex items-center justify-between p-5 bg-white/[0.03] rounded-2xl border border-white/5 hover:bg-white/[0.06] transition-all group">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-xl flex items-center justify-center ${f.status === 'PAGO' ? 'bg-accent/10 text-accent' : 'bg-yellow-500/10 text-yellow-400'}">
-                            <i data-lucide="dollar-sign" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <p class="font-bold text-white group-hover:text-brand transition-colors">${f.clienteNome}</p>
-                            <p class="text-xs text-gray-500 font-medium">R$ ${f.valor.toFixed(2)}</p>
-                        </div>
+        function renderInventory() {
+            const list = document.getElementById('inventory-list');
+            list.innerHTML = inventory.map(i => `
+                <div class="glass p-5 rounded-xl border-t-2 border-blue-500">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-[10px] bg-slate-800 px-2 py-1 rounded text-slate-400">ID: ${i.id.substring(0, 6)}</span>
+                        <span class="text-blue-400 font-bold">${i.qtd} un</span>
                     </div>
-                    <span class="text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider ${f.status === 'PAGO' ? 'bg-accent/20 text-accent' : 'bg-yellow-500/20 text-yellow-400'}">${f.status}</span>
+                    <h4 class="font-bold text-lg">${i.nome}</h4>
+                    <p class="text-xs text-slate-500 mt-1">${i.cat}</p>
                 </div>
             `).join('');
-            document.getElementById('recent-activity').innerHTML = recent || '<p class="text-gray-500 text-center py-10 italic">Nenhuma atividade.</p>';
-            lucide.createIcons();
-            updateChart();
         }
 
-        function updateChart() {
-            const ctx = document.getElementById('revenueChart').getContext('2d');
-            const statusData = {
-                'PENDENTE': faturas.filter(f => f.status === 'PENDENTE').reduce((s, f) => s + f.valor, 0),
-                'PAGO': faturas.filter(f => f.status === 'PAGO').reduce((s, f) => s + f.valor, 0),
-                'VENCIDO': faturas.filter(f => f.status === 'VENCIDO').reduce((s, f) => s + f.valor, 0)
-            };
+        function renderOrders() {
+            const list = document.getElementById('orders-list');
+            list.innerHTML = orders.sort((a,b) => {
+                const tA = a.data?.toDate ? a.data.toDate().getTime() : new Date(a.data).getTime();
+                const tB = b.data?.toDate ? b.data.toDate().getTime() : new Date(b.data).getTime();
+                return tB - tA;
+            }).map(o => {
+                const client = clients.find(c => c.id === o.clienteId);
+                const clientName = client ? client.nome : 'Cliente não encontrado';
+                
+                return `
+                <div class="glass p-4 rounded-xl flex items-center justify-between border-l-4 border-amber-500">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-amber-500/10 p-3 rounded-lg text-amber-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-3">
+                                <h4 class="font-bold text-lg">${o.tipo}</h4>
+                                <span class="text-sm font-semibold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-md">${clientName}</span>
+                                <span class="text-[10px] text-slate-500 font-mono">#${o.id.substring(0, 6)}</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1">${o.desc.substring(0, 80)}...</p>
+                            <div class="flex items-center gap-3 mt-2">
+                                <p class="text-[10px] text-slate-500 font-medium flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                    ${o.data?.toDate ? o.data.toDate().toLocaleDateString('pt-BR') : new Date(o.data).toLocaleDateString('pt-BR')}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right flex flex-col items-end gap-2">
+                        <span class="text-[10px] font-bold px-3 py-1 rounded-full ${o.status === 'Concluído' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-amber-500/20 text-amber-500'}">
+                            ${o.status.toUpperCase()}
+                        </span>
+                        <div class="flex gap-2">
+                            <button onclick="editOS('${o.id}')" class="text-[10px] bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg font-bold transition shadow-lg shadow-blue-900/20">Editar</button>
+                            ${o.status !== 'Concluído' ? `<button onclick="completeOS('${o.id}')" class="text-[10px] bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-bold transition shadow-lg shadow-emerald-900/20">Concluir OS</button>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+        }
 
-            if (revenueChart) revenueChart.destroy();
-            revenueChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Pendente', 'Pago', 'Vencido'],
-                    datasets: [{
-                        label: 'Valor (R$)',
-                        data: [statusData.PENDENTE, statusData.PAGO, statusData.VENCIDO],
-                        backgroundColor: ['#fbbf24', '#10b981', '#ef4444'],
-                        borderRadius: 12,
-                        barThickness: 50
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#4b5563' } },
-                        x: { grid: { display: false }, ticks: { color: '#4b5563' } }
-                    }
+        function renderPlans() {
+            const list = document.getElementById('plans-list');
+            list.innerHTML = plans.map(p => `
+                <div class="glass p-6 rounded-2xl border-t-4 border-blue-500">
+                    <h4 class="font-bold text-xl">${p.nome}</h4>
+                    <p class="text-2xl font-bold text-blue-400 mt-2">R$ ${p.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}<span class="text-xs text-slate-500 font-normal"> /mês</span></p>
+                    <p class="text-sm text-slate-400 mt-4">${p.descricao}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderProducts() {
+            const list = document.getElementById('products-list');
+            list.innerHTML = products.map(p => `
+                <div class="glass p-6 rounded-2xl border-t-4 border-emerald-500">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-lg">${p.nome}</h4>
+                        <span class="text-[10px] bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded font-bold uppercase">${p.categoria}</span>
+                    </div>
+                    <p class="text-xl font-bold text-emerald-400 mt-4">R$ ${p.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                </div>
+            `).join('');
+        }
+
+        function updateOSSelect() {
+            const select = document.getElementById('os-cliente');
+            if (select) {
+                select.innerHTML = '<option value="">Selecione o Cliente...</option>' + clients.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
+            }
+        }
+
+        // Actions
+        window.completeOS = async (id) => {
+            try {
+                await updateDoc(doc(db, 'os', id), { status: 'Concluído' });
+            } catch (e) { console.error(e); }
+        };
+
+        window.editOS = (id) => {
+            const o = orders.find(order => order.id === id);
+            if (!o) return;
+            
+            editingOSId = id;
+            document.getElementById('os-cliente').value = o.clienteId;
+            document.getElementById('os-tipo').value = o.tipo;
+            document.getElementById('os-desc').value = o.desc;
+            
+            const dateObj = o.data?.toDate ? o.data.toDate() : new Date(o.data);
+            const formattedDate = dateObj.toISOString().split('T')[0];
+            document.getElementById('os-data').value = formattedDate;
+            
+            document.getElementById('error-os').classList.add('hidden');
+            document.querySelector('#modal-os h3').textContent = 'Editar Ordem de Serviço';
+            openModal('modal-os');
+        };
+
+        window.openOSModal = () => {
+            editingOSId = null;
+            document.getElementById('os-cliente').value = '';
+            document.getElementById('os-tipo').value = 'Instalação';
+            document.getElementById('os-desc').value = '';
+            document.getElementById('os-data').value = new Date().toISOString().split('T')[0];
+            document.getElementById('error-os').classList.add('hidden');
+            document.querySelector('#modal-os h3').textContent = 'Nova Ordem de Serviço';
+            openModal('modal-os');
+        };
+
+        // Form Handlers
+        document.getElementById('save-client').onclick = async () => {
+            const nome = document.getElementById('c-nome').value;
+            const docVal = document.getElementById('c-doc').value;
+            const tel = document.getElementById('c-tel').value;
+            const email = document.getElementById('c-email').value;
+            const end = document.getElementById('c-end').value;
+            const errorDiv = document.getElementById('error-cliente');
+
+            if (!nome || !docVal || !tel || !email) {
+                errorDiv.textContent = 'Preencha os campos obrigatórios.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, 'clientes'), {
+                    nome, doc: docVal, tel, email, end,
+                    userId: currentUser.uid, status: 'Ativo', createdAt: serverTimestamp()
+                });
+                closeModal('modal-cliente');
+                document.querySelectorAll('#modal-cliente input').forEach(i => i.value = '');
+            } catch (e) { console.error(e); }
+        };
+
+        document.getElementById('save-inventory').onclick = async () => {
+            const nome = document.getElementById('i-nome').value;
+            const qtd = parseInt(document.getElementById('i-qtd').value) || 0;
+            const cat = document.getElementById('i-cat').value;
+            const errorDiv = document.getElementById('error-estoque');
+
+            if (!nome || qtd <= 0) {
+                errorDiv.textContent = 'Nome e quantidade são obrigatórios.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, 'estoque'), { nome, qtd, cat, userId: currentUser.uid });
+                closeModal('modal-estoque');
+                document.querySelectorAll('#modal-estoque input').forEach(i => i.value = '');
+            } catch (e) { console.error(e); }
+        };
+
+        document.getElementById('save-os').onclick = async () => {
+            const clienteId = document.getElementById('os-cliente').value;
+            const tipo = document.getElementById('os-tipo').value;
+            const data = document.getElementById('os-data').value;
+            const desc = document.getElementById('os-desc').value;
+            const errorDiv = document.getElementById('error-os');
+
+            if (!clienteId || !tipo || !data || !desc) {
+                errorDiv.textContent = 'Todos os campos são obrigatórios.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                if (editingOSId) {
+                    await updateDoc(doc(db, 'os', editingOSId), {
+                        clienteId, tipo, desc,
+                        data: new Date(data)
+                    });
+                } else {
+                    await addDoc(collection(db, 'os'), {
+                        clienteId, tipo, desc, status: 'Aberto',
+                        userId: currentUser.uid, data: new Date(data)
+                    });
                 }
-            });
-        }
+                closeModal('modal-os');
+                editingOSId = null;
+            } catch (e) { console.error(e); }
+        };
 
-        // Inicializa ícones
-        lucide.createIcons();
-        showScreen('dashboard');
+        document.getElementById('save-plan').onclick = async () => {
+            const nome = document.getElementById('p-nome').value;
+            const preco = parseFloat(document.getElementById('p-preco').value) || 0;
+            const descricao = document.getElementById('p-desc').value;
+            const errorDiv = document.getElementById('error-plano');
+
+            if (!nome || preco <= 0 || !descricao) {
+                errorDiv.textContent = 'Preencha todos os campos.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, 'planos'), { nome, preco, descricao, userId: currentUser.uid, createdAt: serverTimestamp() });
+                closeModal('modal-plano');
+                document.querySelectorAll('#modal-plano input, #modal-plano textarea').forEach(i => i.value = '');
+            } catch (e) { console.error(e); }
+        };
+
+        document.getElementById('save-product').onclick = async () => {
+            const nome = document.getElementById('pr-nome').value;
+            const preco = parseFloat(document.getElementById('pr-preco').value) || 0;
+            const categoria = document.getElementById('pr-cat').value;
+            const errorDiv = document.getElementById('error-produto');
+
+            if (!nome || preco <= 0 || !categoria) {
+                errorDiv.textContent = 'Preencha todos os campos.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, 'produtos'), { nome, preco, categoria, userId: currentUser.uid, createdAt: serverTimestamp() });
+                closeModal('modal-produto');
+                document.querySelectorAll('#modal-produto input, #modal-produto select').forEach(i => i.value = '');
+            } catch (e) { console.error(e); }
+        };
+
+        window.openModal = (id) => { document.getElementById(id).classList.remove('hidden'); };
+        window.closeModal = (id) => { document.getElementById(id).classList.add('hidden'); };
     </script>
 </body>
 </html>
